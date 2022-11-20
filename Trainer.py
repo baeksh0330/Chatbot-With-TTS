@@ -2,6 +2,8 @@ import aboutDataSets
 import numpy as np
 import pandas as pd
 import torch
+from tqdm import tqdm # 학습 진행률 시각화 1
+from time import sleep # 학습 진행률 시각화 2
 import re  # 정규식 계산
 import urllib.request  # url로 csv파일 받아오기
 from pytorch_lightning import Trainer  # pip install pytorch_lightning
@@ -72,9 +74,9 @@ sneg = -1e18 # 이 변수는 뭐야?
 
 # 학습 시작
 print("::start::")
-for epoch in range(epoch):
+for epoch in tqdm(range(epoch)): # 시각화를 위한 tqdm library
     for batch_idx, samples in enumerate(train_dataLoader):
-        print(batch_idx, samples)
+        #print(batch_idx, samples)
         optimizer.zero_grad() # 초기화 느낌
         token_ids, mask, label = samples
         out = model(token_ids)
@@ -88,20 +90,3 @@ for epoch in range(epoch):
         # 학습 끝
         optimizer.step()
 print("end")
-
-# with torch.no_grad():
-#     while 1:
-#         q = input("user > ").strip()
-#         if q == "quit":
-#             break
-#         a = ""
-#         while 1:
-#             input_ids = torch.LongTensor(tokenizer.encode(Q_TKN + q + SENT + A_TKN + a)).unsqueeze(dim=0) # 이 sent뭐임??
-#             pred = model(input_ids)
-#             pred = pred.logits
-#             gen = tokenizer.convert_ids_to_tokens(torch.argmax(pred, dim=-1).squeeze().numpy().tolist())[-1]
-#             if gen == EOS:
-#                 break
-#             a += gen.replace("▁", " ")
-#         print("Chatbot > {}".format(a.strip()))
-# #
