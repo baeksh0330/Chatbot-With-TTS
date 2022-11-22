@@ -1,16 +1,9 @@
 import aboutDataSets
-import numpy as np
 import pandas as pd
 import torch
 from tqdm import tqdm # 학습 진행률 시각화 1
-from time import sleep # 학습 진행률 시각화 2
-import re  # 정규식 계산
 import urllib.request  # url로 csv파일 받아오기
-from pytorch_lightning import Trainer  # pip install pytorch_lightning
-from pytorch_lightning.callbacks import ModelCheckpoint
-from pytorch_lightning.core.lightning import LightningModule
-from torch.utils.data import DataLoader, Dataset
-from transformers.optimization import AdamW  # optimizer
+from torch.utils.data import DataLoader
 from transformers import PreTrainedTokenizerFast, GPT2LMHeadModel
 
 # 토큰은 변경 가능. unused는 임의로 변경가능.
@@ -66,13 +59,19 @@ lr = 3e-5
 criterion = torch.nn.CrossEntropyLoss(reduction='none')
 optimizer = torch.optim.Adam(model.parameters(), lr=lr)
 epoch = 10
-sneg = -1e18 # 이 변수는 뭐야?
+sneg = -1e18  # 이 변수는 뭐야?
 
 # for b, s in enumerate(train_dataLoader): # 여기서 오류가 남
 #     print(s)
 
 
+# model.save_model('modelBaselineDataset.h5')
+
+# torch.save(model.state_dict(), 'modelBaselineDataset3.h5')
+# isempty = os.stat('modelBaselineDataset3.h5').st_size == 0
+
 # 학습 시작
+
 print("::start::")
 for epoch in tqdm(range(epoch)): # 시각화를 위한 tqdm library
     for batch_idx, samples in enumerate(train_dataLoader):
@@ -81,7 +80,6 @@ for epoch in tqdm(range(epoch)): # 시각화를 위한 tqdm library
         token_ids, mask, label = samples
         out = model(token_ids)
         out = out.logits  # returns a new tensor with the logit of the elements of input
-        #여기 함수 공부 할것. upsqueeze는 차원 올리기인데.
         mask_3d = mask.unsqueeze(dim=2).repeat_interleave(repeats=out.shape[2], dim=2)
         mask_out = torch.where(mask_3d == 1, out, sneg * torch.ones_like(out))
         loss = criterion(mask_out.transpose(2, 1), label)
@@ -90,3 +88,7 @@ for epoch in tqdm(range(epoch)): # 시각화를 위한 tqdm library
         # 학습 끝
         optimizer.step()
 print("end")
+
+
+# model.load_state_dict(torch.load('modelBaselineDataset3.h5'))
+# print('else case')

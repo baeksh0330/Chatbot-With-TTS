@@ -1,0 +1,10 @@
+transformers
+gtts
+keras
+numpy
+pandas
+playsound
+pyaudio
+speechrecognition
+sounddevice
+torch
