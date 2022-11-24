@@ -21,21 +21,6 @@ ChatData = ChatData[:300]  # test용으로 300개만 처리 : reference
 # print(ChatData.info())
 # print(ChatData.isnull().sum()) # 불필요한 NULL값 확인.
 
-# 구두점 처리 : 이 과정이 꼭 필요한지는 모르겠다. 아래에서 다시 진행하므로 일단 주석처리. 참고용.
-# questions = []
-# for sentence in ChatData['Q']: # 질문 부분 전처리
-#     sentence = re.sub(r"([?.!,])", r" \1",sentence)
-#     sentence = sentence.strip()
-#     questions.append(sentence)
-#
-# answers = []
-# for sentence in ChatData['A']:  # 답변변 부분 전처리
-#     sentence = re.sub(r"([?.!,])", r" \1",sentence)
-#     sentence = sentence.strip()
-#     answers.append(sentence)
-# print(questions[:5])
-# print(answers[:5])
-
 # tokens
 Q_TKN = "<usr>"
 A_TKN = "<sys>"
@@ -52,14 +37,6 @@ tokenizer = PreTrainedTokenizerFast.from_pretrained(
     unk_token="<unk>",  # 모르는 단어를 나타내는 token
     pad_token=PAD,  # 동일한 batch 안에서 입력의 크기를 동일하게 만들기 위한 padding
     mask_token=MASK, )  # attention mask
-
-# encoded = koGPT2_TOKENIZER("This is Test for tokenizer performance")
-# print("Test Encoding: ", encoded)
-# encoding3 = tokenizer("넌 당연하지 않아")
-# print("Encoding result = ", encoding3)
-
-# for ts in encoding3:
-#     print('{}---->{}'.format(ts, koGPT2_TOKENIZER([ts]))) # tokenizer decode함수를 못찾겠다. 디코딩 어떻게 함.
 
 # 챗봇 데이터 처리
 class ChatDataset(Dataset):
@@ -148,25 +125,3 @@ train_dataloader = DataLoader(train_set,
                               collate_fn=collate_batch,) # 뭐지?
 
 model = GPT2LMHeadModel.from_pretrained('skt/kogpt2-base-v2')
-
-# hyper-parameters - fine_tuning
-# D_model = 256
-# numLayers = 2
-# numHeads = 8
-# dff = 512 # 이거 뭐임
-# dropOut = 0.1
-#
-# lr = 0.01
-# epochs = 10
-# optimizer = AdamW(lr, eps=1e-6)
-
-
-
-# def __main__():
-#     print("start")
-#     for batch_idx, samples in enumerate(train_dataloader):
-#         token_ids, mask, label = samples
-#         print("token_ids ====> ", token_ids)
-#         print("mask =====> ", mask)
-#         print("label =====> ", label)
-#     print("end")
